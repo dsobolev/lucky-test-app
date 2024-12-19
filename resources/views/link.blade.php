@@ -22,7 +22,7 @@
 </head>
 <body>
     <div>
-        <p>Use this one:</p>
+        <p>Hi {{ username }}! Use this one:</p>
         <a href="{{ $link }}" target="_blank">{{ $link }}</a>
     </div>
 </body>

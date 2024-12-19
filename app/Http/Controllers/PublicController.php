@@ -25,14 +25,11 @@ class PublicController extends Controller
 
         $linkPart = uniqid();
 
-        // generate link
         // save name, phone, link
-        // return link
         return to_route('link', [
             'username' => $username,
             'link' => $linkPart,
         ]);
-        // expiration -> migration
     }
 
     public function showLink(string $username, string $link): View
