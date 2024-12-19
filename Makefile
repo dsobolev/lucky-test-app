@@ -11,7 +11,8 @@ start:
 	php artisan serve --port 8001
 
 stop:
-	docker compose down
+	docker compose down &&
+	kill $$(ps aux | grep 'php artisan serve' | head -1 | awk '{print $$2}')
 
 # logs:
 # 	docker compose logs
