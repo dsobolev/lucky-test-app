@@ -9,3 +9,5 @@ Route::get('/', function () {
 
 Route::get('/register', [PublicController::class, 'index']);
 Route::post('/register', [PublicController::class, 'register']);
+Route::get('/link/{username}/{link}', [PublicController::class, 'showLink'])
+    ->name('link');

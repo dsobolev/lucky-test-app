@@ -17,17 +17,31 @@ class PublicController extends Controller
     {
         $validated = $request->validate([
             'username' => 'bail|required|unique:users',
-            'phone' => 'required',
+            'phone' => 'bail|required|digits_between:10,15',
         ]);
 
-        $username = $request->input('username');
-        $phone = $request->input('phone');
+        $username = $validated['username'];
+        $phone = $validated['phone'];
 
+        $linkPart = uniqid();
 
         // generate link
         // save name, phone, link
         // return link
-        return to_route('post.show', ['link' => $link]);
+        return to_route('link', [
+            'username' => $username,
+            'link' => $linkPart,
+        ]);
         // expiration -> migration
+    }
+
+    public function showLink(string $username, string $link): View
+    {
+        $linkToShow = url($link);
+
+        return view('link', [
+            'username' => $username,
+            'link' => $linkToShow,
+        ]);
     }
 }
