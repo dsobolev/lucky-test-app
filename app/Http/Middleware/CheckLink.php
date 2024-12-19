@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,8 +16,15 @@ class CheckLink
             return to_route('register');
         }
 
-        // check if it is in DB
-        // check // expiration -> migration
+        $user = User::where('link_token', $linkParam)->first();
+
+        if (is_null($user)) {
+            return to_route('register');
+        }
+
+        if ($user->expired_at <= now()) {
+            return to_route('register');
+        }
 
         return $next($request);
     }

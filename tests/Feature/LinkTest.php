@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class LinkTest extends TestCase
@@ -20,4 +21,29 @@ class LinkTest extends TestCase
         $response->assertRedirect('/register');
     }
 
+    public function test_redirects_when_link_expired(): void
+    {
+        // created in DatabaseSeeder
+        $user = User::where('username', 'expired_tst_1')->first();
+
+        $response = $this->get('/' . $user->link_token);
+
+        $response->assertRedirect('/register');
+    }
+
+    public function test_shows_lucky_page_when_link_valid(): void
+    {
+        $username = 'valid_tst_1';
+        $user = User::factory()->create([
+            'username' => $username,
+            'expired_at' => new \DateTimeImmutable('tomorrow'),
+        ]);
+
+        $response = $this->get('/' . $user->link_token);
+
+        $response->assertStatus(200);
+        $response->assertViewHas('username', $username);
+
+        $user->delete();
+    }
 }
