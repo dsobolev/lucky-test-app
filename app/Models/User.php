@@ -20,6 +20,7 @@ class User extends Model
     protected $fillable = [
         'username',
         'phonenumber',
+        'expired_at',
     ];
 
     /**

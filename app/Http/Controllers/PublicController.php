@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use DateTimeImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -25,7 +27,14 @@ class PublicController extends Controller
 
         $linkPart = uniqid();
 
-        // save name, phone, link
+        $user = new User();
+        $user->username = $username;
+        $user->phonenumber = $phone;
+        $user->link_token = $linkPart;
+        $user->expired_at = new DateTimeImmutable('+7 days');
+
+        $user->save();
+
         return to_route('link', [
             'username' => $username,
             'link' => $linkPart,

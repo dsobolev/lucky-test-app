@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register here</title>
+    <title>Link</title>
     <style>
         body {
             font-size: 18px;
@@ -22,7 +22,7 @@
 </head>
 <body>
     <div>
-        <p>Hi {{ username }}! Use this one:</p>
+        <p>Hi <em>{{ $username }}</em>! Use this one:</p>
         <a href="{{ $link }}" target="_blank">{{ $link }}</a>
     </div>
 </body>
