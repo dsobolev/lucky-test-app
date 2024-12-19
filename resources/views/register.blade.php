@@ -32,15 +32,38 @@
             font-size: 24px;
             letter-spacing: 0.2em;
         }
+
+        .alert {
+            color: red;
+        }
+
+        .alert ul {
+            list-style: none;
+        }
+
+        .alert li + li {
+            margin-top: .5em;
+        }
     </style>
 </head>
 <body>
     <form action="/register" method="POST">
         @csrf
 
-        <input type="text" name="name" placeholder="User name" />
-        <input type="tel" name="phone" placeholder="7753462453" pattern="\d{10,15}" />
-        <button>Register</button>
+        <input type="text" name="username" placeholder="User name" value="{{ old('username') }}" />
+        <input type="tel" name="phone" placeholder="7753462453" value="{{ old('phone') }}" />
+
+        @if ($errors->any())
+            <div class="alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <button type="submit">Register</button>
     </form>
 </body>
 </html>
