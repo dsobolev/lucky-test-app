@@ -1,0 +1,12 @@
+services:
+    db:
+        image: nouchka/sqlite3:latest
+        container_name: lucky_db
+        stdin_open: true
+        tty: true
+        volumes:
+            - 'database:/root/db/'
+        network_mode: 'host'
+volumes:
+    database:
+        driver: local
