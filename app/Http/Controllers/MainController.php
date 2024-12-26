@@ -22,13 +22,13 @@ class MainController extends Controller
     public function getLucky(): JsonResponse
     {
         $number = LuckyService::number();
-        $win = LuckyService::isWin($number);
+        $isWin = LuckyService::isWin($number);
         $prize = 0;
 
         if ($isWin) {
             $prize = LuckyService::getPrize($number);
         }
 
-        return response()->json(compact($number, $isWin, $prize));
+        return response()->json(compact('number', 'isWin', 'prize'));
     }
 }

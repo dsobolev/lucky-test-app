@@ -6,7 +6,7 @@ class LuckyService
 {
     public static function number(): int
     {
-        return random(1, 1000);
+        return rand(1, 1000);
     }
 
     public static function isWin(int $number): bool

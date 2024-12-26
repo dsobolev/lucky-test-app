@@ -19,6 +19,8 @@
         }
 
         section {
+            display: flex;
+            align-items: center;
             border-top: 1px solid lightgray;
             padding: 2em;
         }
@@ -28,7 +30,14 @@
             font-size: 24px;
             letter-spacing: 0.2em;
         }
+
+        span {
+            display: inline-block;
+            width: 4em;
+            margin-left: 2em;
+        }
     </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
     <header>
@@ -43,9 +52,43 @@
             <button>History</button>
             <div></div>
         </section>
-        <section>
-            <button>Imfeelinglucky</button>
+        <section x-data="lucky">
+            <button @click="testLuck">Imfeelinglucky</button>
+            <div x-show="showResults">
+                <span x-text="number"></span>
+                <span x-text="winOrLoose"></span>
+                <span x-text="prize" style="text-align: right;"></span>$
+            </div>
         </section>
     </main>
+
+    <script>
+        let linkToken = document.location.pathname.substring(1)
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('lucky', () => ({
+                showResults: false,
+                winOrLoose: '',
+                number: 0,
+                prize: 0,
+
+                async testLuck() {
+                    console.log('from tst', linkToken);
+                    const response = await fetch(`/getlucky/${linkToken}`)
+                    if (!response.ok) {
+                        throw new Error(`Failed. Status ${response.status}`);
+                    }
+
+                    const luckyData = await response.json();
+
+                    this.winOrLoose = luckyData.isWin ? 'Win!' : 'Loose...'
+                    this.number = luckyData.number
+                    this.prize = luckyData.prize
+
+                    this.showResults = true
+                },
+            }))
+        })
+    </script>
 </body>
 </html>
