@@ -22,3 +22,5 @@ Route::delete('/{link}', [MainController::class, 'deactivate']);
 
 // add link here, apply middleware to all MainCtrl routes
 Route::get('/getlucky/{link}', [MainController::class, 'getLucky']);
+
+Route::get('/history/{link}', [MainController::class, 'history']);

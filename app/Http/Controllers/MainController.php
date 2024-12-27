@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\AttemptDto;
 use App\Jobs\SaveAttempt;
 use App\Models\User;
+use App\Services\Formatter;
 use App\Services\LuckyService;
 use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
@@ -71,5 +72,19 @@ class MainController extends Controller
         return response()->json([
             'message' => 'ok'
         ]);
+    }
+
+    public function history(string $link): JsonResponse
+    {
+        $attempts = User::where('link_token', $link)
+            ->first()
+            ->attempts()
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $formattedAttempts = $attempts->map(fn ($attempt) => Formatter::formatAttempt($attempt));
+
+        return response()->json($formattedAttempts->all());
     }
 }
