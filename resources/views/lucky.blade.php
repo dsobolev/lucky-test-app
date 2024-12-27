@@ -36,6 +36,29 @@
             width: 4em;
             margin-left: 2em;
         }
+
+        .attempts {
+            list-style: none;
+            margin: 0;
+            margin-left: 10em;
+        }
+
+        .attempts li {
+            padding-top: .5em;
+            padding-bottom: .5em;
+        }
+
+        .attempts li + li {
+            border-top: 1px solid lightgray;
+        }
+
+        .prize {
+            font-style: italic;
+        }
+
+        .prize:after {
+            content: ' $';
+        }
     </style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
@@ -53,16 +76,26 @@
                 <span x-text="token"></span>
             </form>
         </section>
-        <section>
-            <button>History</button>
-            <div></div>
+        <section x-data="history">
+            <button @click="getAttempts">History</button>
+            <ul x-show="showHistory" class="attempts">
+                <template x-for="attempt in attemptsData">
+                    <li>
+                        Number <span x-text="attempt.number"></span> ->
+                        <span x-text="attempt.isWin ? 'Won' : 'Lost'"></span>
+                        <template x-if="attempt.isWin">
+                            <span x-text="attempt.prize" class="prize"></span>
+                        </template>
+                    </li>
+                </template>
+            </ul>
         </section>
         <section x-data="lucky">
             <button @click="testLuck">Imfeelinglucky</button>
             <div x-show="showResults">
                 <span x-text="number"></span>
                 <span x-text="winOrLoose"></span>
-                <span x-text="prize" style="text-align: right;"></span>$
+                <span x-text="prize" class="prize"></span>
             </div>
         </section>
     </main>
@@ -87,7 +120,7 @@
                     }
 
                     const tokenData = await response.json();
-                    linkToken = this.token =  tokenData.link
+                    linkToken = this.token = tokenData.link
                 },
 
                 async deactivate() {
@@ -107,13 +140,29 @@
 
             }))
 
+            Alpine.data('history', () => ({
+                attemptsData: [],
+                showHistory: false,
+
+                async getAttempts() {
+                    const response = await fetch(`/history/${linkToken}`)
+
+                    if (!response.ok) {
+                        throw new Error(`Failed. Status ${response.status}`);
+                    }
+
+                    this.attemptsData = await response.json()
+                    this.showHistory = true
+                }
+            }))
+
             Alpine.data('lucky', () => ({
                 showResults: false,
                 winOrLoose: '',
                 number: 0,
                 prize: 0,
 
-                async testLuck() { console.log(linkToken);
+                async testLuck() {
                     const response = await fetch(`/getlucky/${linkToken}`)
                     if (!response.ok) {
                         throw new Error(`Failed. Status ${response.status}`);
