@@ -52,4 +52,19 @@ class MainController extends Controller
             'link' => $linkPart
         ]);
     }
+
+    public function deactivate(string $link): JsonResponse
+    {
+        $user = User::where('link_token', $link)->first();
+
+        if (is_null($user)) {
+            return response()->json(['message' => 'Link not found'], 404);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'ok'
+        ]);
+    }
 }

@@ -45,11 +45,11 @@
     </header>
     <main>
         <section x-data="linkToken">
-            <form onsubmit="return false">
+            <form>
                 @csrf
 
-                <button @click="generate">Generate New</button>
-                <button>Deactivate</button>
+                <button type="button" @click="generate">Generate New</button>
+                <button type="button" @click="deactivate">Deactivate</button>
                 <span x-text="token"></span>
             </form>
         </section>
@@ -75,11 +75,11 @@
                 token: linkToken,
 
                 async generate() {
-                    const response = await fetch(`/${this.token}`, {
+                    const response = await fetch(`/${linkToken}`, {
                         method: "POST",
                         headers: {
                             "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
-                        }
+                        },
                     })
 
                     if (!response.ok) {
@@ -87,8 +87,24 @@
                     }
 
                     const tokenData = await response.json();
-                    this.token = tokenData.link
+                    linkToken = this.token =  tokenData.link
                 },
+
+                async deactivate() {
+                    const response = await fetch(`/${linkToken}`, {
+                        method: "DELETE",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                        },
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to deactivate the link. Status ${response.status}`);
+                    }
+
+                    document.location.pathname = '/register'
+                }
+
             }))
 
             Alpine.data('lucky', () => ({
@@ -97,7 +113,7 @@
                 number: 0,
                 prize: 0,
 
-                async testLuck() {
+                async testLuck() { console.log(linkToken);
                     const response = await fetch(`/getlucky/${linkToken}`)
                     if (!response.ok) {
                         throw new Error(`Failed. Status ${response.status}`);

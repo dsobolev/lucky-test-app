@@ -18,6 +18,7 @@ Route::get('/{link?}', [MainController::class, 'index'])
     ->middleware(CheckLink::class)
 ;
 Route::post('/{link}', [MainController::class, 'regenerate']);
+Route::delete('/{link}', [MainController::class, 'deactivate']);
 
 // add link here, apply middleware to all MainCtrl routes
 Route::get('/getlucky/{link}', [MainController::class, 'getLucky']);
