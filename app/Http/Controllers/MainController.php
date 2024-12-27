@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\AttemptDto;
+use App\Jobs\SaveAttempt;
 use App\Models\User;
 use App\Services\LuckyService;
 use DateTimeImmutable;
@@ -21,7 +22,7 @@ class MainController extends Controller
         ]);
     }
 
-    public function getLucky(): JsonResponse
+    public function getLucky(string $link): JsonResponse
     {
         $number = LuckyService::number();
         $isWin = LuckyService::isWin($number);
@@ -31,6 +32,8 @@ class MainController extends Controller
         if ($isWin) {
             $attmeptData->setPrize(LuckyService::getPrize($number));
         }
+
+        SaveAttempt::dispatch($link, $attmeptData);
 
         return response()->json($attmeptData);
     }
