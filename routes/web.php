@@ -13,9 +13,11 @@ Route::get('/link/{username}/{link}', [PublicController::class, 'showLink'])
     ->name('link')
 ;
 
+
 Route::get('/{link?}', [MainController::class, 'index'])
     ->middleware(CheckLink::class)
 ;
+Route::post('/{link}', [MainController::class, 'regenerate']);
 
 // add link here, apply middleware to all MainCtrl routes
 Route::get('/getlucky/{link}', [MainController::class, 'getLucky']);

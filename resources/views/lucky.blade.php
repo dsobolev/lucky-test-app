@@ -44,9 +44,14 @@
         <h1>Welcome, {{ $username }}</h1>
     </header>
     <main>
-        <section>
-            <button>Generate New</button>
-            <button>Deactivate</button>
+        <section x-data="linkToken">
+            <form onsubmit="return false">
+                @csrf
+
+                <button @click="generate">Generate New</button>
+                <button>Deactivate</button>
+                <span x-text="token"></span>
+            </form>
         </section>
         <section>
             <button>History</button>
@@ -66,6 +71,26 @@
         let linkToken = document.location.pathname.substring(1)
 
         document.addEventListener('alpine:init', () => {
+            Alpine.data('linkToken', () => ({
+                token: linkToken,
+
+                async generate() {
+                    const response = await fetch(`/${this.token}`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                        }
+                    })
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to regenerate the link. Status ${response.status}`);
+                    }
+
+                    const tokenData = await response.json();
+                    this.token = tokenData.link
+                },
+            }))
+
             Alpine.data('lucky', () => ({
                 showResults: false,
                 winOrLoose: '',
@@ -73,7 +98,6 @@
                 prize: 0,
 
                 async testLuck() {
-                    console.log('from tst', linkToken);
                     const response = await fetch(`/getlucky/${linkToken}`)
                     if (!response.ok) {
                         throw new Error(`Failed. Status ${response.status}`);
