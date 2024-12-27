@@ -10,21 +10,9 @@ install:
 
 start:
 	docker compose up --detach && \
-	php artisan serve --port 8001
+	php artisan serve --port 8001 > /dev/null 2>&1 &
+	php artisan queue:work
 
 stop:
 	docker compose down
 	kill $$(ps aux | grep 'php artisan serve' | head -1 | awk '{print $$2}')
-
-# logs:
-# 	docker compose logs
-
-# app-shell:
-# 	docker compose exec app sh
-
-# artisan:
-# #     @$(eval c ?=)
-# 	docker compose exec app "php artisan"
-
-# ps:
-# 	docker compose ps
