@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\AttemptDto;
 use App\Models\User;
 use App\Services\LuckyService;
 use DateTimeImmutable;
@@ -24,13 +25,14 @@ class MainController extends Controller
     {
         $number = LuckyService::number();
         $isWin = LuckyService::isWin($number);
-        $prize = 0;
+
+        $attmeptData = new AttemptDto(number: $number, isWin: $isWin);
 
         if ($isWin) {
-            $prize = LuckyService::getPrize($number);
+            $attmeptData->setPrize(LuckyService::getPrize($number));
         }
 
-        return response()->json(compact('number', 'isWin', 'prize'));
+        return response()->json($attmeptData);
     }
 
     public function regenerate(string $link): JsonResponse
